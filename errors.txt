@@ -1,0 +1,12 @@
+1) Update error
+>>>pyproject.toml
+[tool]
+[tool.poetry]
+...
+description = "added description here"
+
+2) Matplotlib created a temporary config/cache directory
+>>> main.py
+import os
+# error with default tmp-folder
+os.environ['MPLCONFIGDIR'] = "/tmp"
