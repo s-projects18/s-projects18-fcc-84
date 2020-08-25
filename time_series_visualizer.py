@@ -47,14 +47,30 @@ def draw_line_plot():
 def draw_bar_plot():
     # It should show average daily page views for each month grouped by year
     # Copy and modify data for monthly bar plot
-    df_bar = None
+    df_bar = df.copy()
+    df_bar['year'] = df_bar.index.year
+    df_bar['Month'] = df_bar.index.strftime('%B')
+    df_grp = df_bar.groupby(['year', 'Month'])
+    # series
+    df_grp['value'].apply(lambda x: x.mean())
 
     # Draw bar plot
+    #darkgrid, whitegrid, dark, white, ticks
+    sns.set_style("ticks")
+    list_month=['January','February','March','April','May','June','July','August','September','October','November','December']
+    # , palette="rocket"
+    g = sns.catplot(x="year", kind="bar", hue="Month", y="value", data=df_bar, hue_order=list_month, ci=None, legend=False, palette="hls")
 
-
-
-
-
+    fig = g.fig
+    ax = g.ax    
+    ax.set_ylabel('Average Page Views')
+    ax.set_xlabel('Years')
+    plt.xticks(rotation=90)
+    plt.legend(loc='upper left', title="Month")
+    plt.setp(ax.get_legend().get_texts(), fontsize='8')
+    plt.setp(ax.get_legend().get_title(), fontsize='8')
+    plt.tight_layout()
+    
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
     return fig
