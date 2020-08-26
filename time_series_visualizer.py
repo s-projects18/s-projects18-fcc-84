@@ -79,10 +79,7 @@ def draw_bar_plot():
 # https://github.com/mwaskom/seaborn/issues/915
 # TypeError: box() got an unexpected keyword argument 'label'
 def fixed_boxplot(*args, label=None, **kwargs):
-  a,b = args
-  d = {'Year':'Year-wise Box Plot (Trend)',
-  'Month':'Month-wise Box Plot (Seasonality)'}
-  sns.boxplot(*args, **kwargs, labels=[label]).set_title(d[a.name])
+  sns.boxplot(*args, **kwargs, labels=[label])
 
 
 def draw_box_plot():
@@ -108,6 +105,8 @@ def draw_box_plot():
     fig.set_figwidth(16)
     fig.axes[0].set_ylabel('Page Views')
     fig.axes[1].set_ylabel('Page Views')
+    fig.axes[0].set_title('Year-wise Box Plot (Trend)')
+    fig.axes[1].set_title('Month-wise Box Plot (Seasonality)')
     plt.tight_layout()
     
 
