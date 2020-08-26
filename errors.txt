@@ -10,3 +10,6 @@ description = "added description here"
 import os
 # error with default tmp-folder
 os.environ['MPLCONFIGDIR'] = "/tmp"
+
+3) https://github.com/mwaskom/seaborn/issues/915
+TypeError: box() got an unexpected keyword argument 'label'

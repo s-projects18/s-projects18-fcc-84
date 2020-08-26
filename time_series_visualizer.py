@@ -7,6 +7,8 @@ register_matplotlib_converters()
 
 from matplotlib import dates as mpl_dates
 
+list_month=['January','February','March','April','May','June','July','August','September','October','November','December']
+
 # Import data (Make sure to parse dates. Consider setting index column to 'date'.)
 # dataset containing the number of page views each day on the freeCodeCamp.org forum from 2016-05-09 to 2019-12-03
 # date,value
@@ -57,7 +59,6 @@ def draw_bar_plot():
     # Draw bar plot
     #darkgrid, whitegrid, dark, white, ticks
     sns.set_style("ticks")
-    list_month=['January','February','March','April','May','June','July','August','September','October','November','December']
     # , palette="rocket"
     g = sns.catplot(x="year", kind="bar", hue="Month", y="value", data=df_bar, hue_order=list_month, ci=None, legend=False, palette="hls")
 
@@ -75,6 +76,15 @@ def draw_bar_plot():
     fig.savefig('bar_plot.png')
     return fig
 
+# https://github.com/mwaskom/seaborn/issues/915
+# TypeError: box() got an unexpected keyword argument 'label'
+def fixed_boxplot(*args, label=None, **kwargs):
+  a,b = args
+  d = {'Year':'Year-wise Box Plot (Trend)',
+  'Month':'Month-wise Box Plot (Seasonality)'}
+  sns.boxplot(*args, **kwargs, labels=[label]).set_title(d[a.name])
+
+
 def draw_box_plot():
     # Prepare data for box plots (this part is done!)
     df_box = df.copy()
@@ -82,11 +92,24 @@ def draw_box_plot():
     df_box['year'] = [d.year for d in df_box.date]
     df_box['month'] = [d.strftime('%b') for d in df_box.date]
 
+    # adjust data
+    # - first month of 2016 is may > boxplot starts with may
+    # - resort by year desc > first month of 2019 is january 
+    df_box.sort_values(by=['year','date'], ascending=[False, True], inplace=True)
+
     # Draw box plots (using Seaborn)
-
-
-
-
+    df_box["Page Views"] = df_box["value"]
+    df_box["Month"] = df_box["month"]
+    df_box["Year"] = df_box["year"]
+    g = sns.PairGrid(df_box, y_vars=["Page Views"], x_vars=["Year", "Month"], palette="hls")
+    g.map(fixed_boxplot)
+    fig = g.fig
+    fig.set_figheight(6)
+    fig.set_figwidth(16)
+    fig.axes[0].set_ylabel('Page Views')
+    fig.axes[1].set_ylabel('Page Views')
+    plt.tight_layout()
+    
 
     # Save image and return fig (don't change this part)
     fig.savefig('box_plot.png')
